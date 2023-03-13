@@ -1,0 +1,89 @@
+import random as r
+
+class Vector:
+    def __init__(self,rozmiar=3,T=[]):
+        #Funkcja inicjuje wektor o danym rozmiarze i elementach
+        self.rozmiar = rozmiar
+        self.T = T
+    def generuj(self):
+        #Funkcja generuje losowe elementy wektora
+        self.T = []
+        for i in range (self.rozmiar):
+            self.T.append(r.uniform(-10,10))
+    def wczytaj(self,S):
+        #Funkcja wczytuje elementy do wektora z danej tablicy
+        if len(S) < self.rozmiar:
+            raise ValueError("Lista za mała")
+        if len(S) > self.rozmiar:
+            raise ValueError("Lista za duża")
+        self.T = S
+        return self.T
+    def __add__(self,v):
+        #Funkcja dodaje wektory
+        if v.rozmiar != self.rozmiar:
+            raise ValueError("Wektory są różnej długości")
+        s = Vector(self.rozmiar)
+        S = []
+        for i in range (self.rozmiar):
+            S.append(v.T[i] + self.T[i])
+        s.wczytaj(S)
+        return s
+    def __mul__(self,a):
+        #Funkcja mnoży wektor przez skalar
+        s = Vector(self.rozmiar)
+        S = []
+        for i in range (self.rozmiar):
+            S.append(a * self.T[i])
+        s.wczytaj(S)
+        return s
+    def dlugosc(self):
+        #Funkcja zwraca długość wektora
+        z = 0
+        for i in range (self.rozmiar):
+            z += self.T[i]**2
+        return z**.5
+    def suma(self):
+        #Funkcja zwraca sumę elementów wektora
+        z = 0
+        for i in range (self.rozmiar):
+            z += self.T[i]
+        return z
+    def iloczyn(self,v):
+        #Funcja mnoży skalarnie dwa wektory
+        if v.rozmiar != self.rozmiar:
+            raise ValueError("Wektory są różnej długości")
+        z = 0
+        for i in range (self.rozmiar):
+            z += self.T[i] * v.T[i]
+        return z
+    def __contains__(self,a):
+        #Funkcja sprawdza zawieranie elementu
+        for i in range (self.rozmiar):
+            if self.T[i] == a:
+                return True
+        return False
+    def __getitem__(self,a):
+        #Funkcja zwraca element o danym indeksie
+        return self.T[a]
+    def __str__(self):
+        #Funkcja zwraca reprezentacje tekstową
+        return str(self.T)
+
+#Przykłady użycia:
+v = Vector(6)
+v.generuj()
+print(v)
+print(v.dlugosc())
+print(v.suma())
+u = Vector(3,[3,4,2])
+w = Vector(3)
+z = Vector(2,[6,8])
+w.wczytaj([2,4,1])
+t = u + w
+print(u,w,t)
+s = t + w
+print(s)
+print(w*14)
+print(w.iloczyn(u))
+print(2 in w)
+print(u[2])
