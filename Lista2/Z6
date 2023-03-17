@@ -1,0 +1,42 @@
+s = '242+3+43+432+32552+52+23+2+2+535+0+6'
+T = ['0','1','2','3','4','5','6','7','8','9']
+Z = ['+','-','*','/']
+d = 0 #dlugosc
+dm = 0 #dlugosc max
+L = [0] #liczby
+o = '' #operacja
+z = 0 #ile liczb
+w = 0 #wynik
+for i in range(len(s)):
+    if s[i] in T:
+        L[z] *= 10
+        L[z] += int(s[i])
+        d += 1
+    if d > dm:
+        dm = d
+    if s[i] in Z:
+        o = s[i]
+        d = 0
+        L.append(0)
+        z += 1
+print(L,dm,z,o)
+if o == '+':
+    w = sum(L)
+if o == '-':
+    w = 2*L[0] - sum(L)
+if o == '*':
+    w = 1
+    for i in range(len(L)):
+        w *= L[i]
+if len(str(w)) > dm:
+    dm = len(str(w))
+for i in range(dm + 2 - len(str(L[0]))):
+    print(' ',end='')
+print(L[0])
+for i in range(len(L)-1):
+    print(o,end=' ')
+    for j in range(dm - len(str(L[i]))):
+        print(' ',end='')
+    print(L[i])
+for i in range(dm + 2):
+    print('-',end='')
