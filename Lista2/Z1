@@ -1,0 +1,8 @@
+import random as r
+T = []
+s = ""
+for i in range(33,127):
+    T.append(chr(i))
+for i in range(8):
+    s += T[r.randint(0,len(T)-1)]
+print(s)
