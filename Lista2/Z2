@@ -1,0 +1,6 @@
+def miniatura(pic, size, thumb):
+    from PIL import Image
+    a = Image.open(f"Desktop/275989/{pic}")
+    b = a.convert("RGB")
+    b.thumbnail(size)
+    b.save(f"Desktop/275989/{thumb}.jpg")
