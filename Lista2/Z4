@@ -1,0 +1,8 @@
+def podziel(plik):
+    from PyPDF2 import PdfWriter, PdfReader
+    a = PdfReader(open(f"Desktop/275989/{plik}", "rb"))
+    for i in range(len(a.pages)):
+        b = PdfWriter()
+        b.add_page(a.pages[i])
+        with open(f"Desktop/275989/{plik[0:-4]}_{i}.pdf", "wb") as page:
+            b.write(page)
