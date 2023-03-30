@@ -1,0 +1,5 @@
+def kopia(katalog):
+    from zipfile import ZipFile
+    from datetime import date
+    with ZipFile(f"Desktop/275989/{date.today().strftime('%d-%m-%Y')}_{katalog}.zip",'w') as zip:
+        zip.write(f"Desktop/275989/{katalog}")
