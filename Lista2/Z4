@@ -1,8 +1,16 @@
-def podziel(plik):
+def podziel(plik,stron):
     from PyPDF2 import PdfWriter, PdfReader
     a = PdfReader(open(f"Desktop/275989/{plik}", "rb"))
-    for i in range(len(a.pages)):
+    n = len(a.pages)
+    for i in range(n//stron):
         b = PdfWriter()
+        for j in range(stron):
+            b.add_page(a.pages[i*stron+j])
+        with open(f"Desktop/275989/{plik[0:-4]}_{i+1}.pdf", "wb") as page:
+            b.write(page)
+    b = PdfWriter()
+    for i in range(n//stron*stron,n):
         b.add_page(a.pages[i])
-        with open(f"Desktop/275989/{plik[0:-4]}_{i}.pdf", "wb") as page:
+    if len(b.pages) > 0:
+        with open(f"Desktop/275989/{plik[0:-4]}_{n//stron+1}.pdf", "wb") as page:
             b.write(page)
