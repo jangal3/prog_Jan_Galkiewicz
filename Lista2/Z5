@@ -1,9 +1,9 @@
 def znak_wodny(pic):
     from PIL import Image, ImageDraw, ImageFont
     a = Image.open(f"Desktop/275989/{pic}")
-    a = a.convert("RGB")
+    a = a.convert("RGBA")
     x, y = a.size[0], a.size[1]
     draw = ImageDraw.Draw(a)
-    font = ImageFont.truetype('arial.ttf', int(x//30))
-    draw.text((x/2,y/2),"watermark",font = font, fill = '#FFFFFF', stroke_width = 2, stroke_fill = '#000000', anchor = 'ms')
-    a.save(f"Desktop/275989/{pic}_wm.jpg")
+    font = ImageFont.truetype('arial.ttf', int(x//15))
+    draw.text((x/2,y/2), "watermark", font = font, fill = (255,255,255), stroke_width = 2, stroke_fill = (0,0,0), anchor = 'ms')
+    a.save(f"Desktop/275989/{pic}_wm.png")
