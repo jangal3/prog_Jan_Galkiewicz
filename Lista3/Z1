@@ -1,0 +1,33 @@
+import shutil
+import time
+import datetime
+import os
+
+def kopia(katalog,ext):
+    cwd = os.getcwd()
+    os.chdir("Desktop/275989")
+    paths = []
+    names = []
+    dates = []
+    for root, dirs, files in os.walk(katalog):
+        for i in files:
+            if i.endswith('.'+ext):
+                a = os.path.join(root, i)
+                paths.append(a)
+                names.append(i)
+
+    c = time.time()
+    for i in paths:
+        a = os.path.getmtime(i)
+        dates.append(c-a)
+
+    C = datetime.date.fromtimestamp(c).strftime("%d.%m.%Y")
+    if not os.path.exists("Backup"):
+        os.mkdir("Backup")
+    if not os.path.exists(f"Backup/copy-{C}"):
+        os.mkdir(f"Backup/copy-{C}")
+
+    for i in range(len(paths)):
+        if dates[i] <= 3*24*3600:
+            shutil.copy(paths[i],f"Backup/copy-{C}/{names[i]}")
+    os.chdir(cwd)
