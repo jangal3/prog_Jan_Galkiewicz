@@ -1,0 +1,18 @@
+from PyPDF2 import PdfWriter
+import os
+
+def polacz(katalog,nazwa):
+    cwd = os.getcwd()
+    os.chdir("Desktop/275989")
+    paths = []
+    for root, dirs, files in os.walk(katalog):
+        for i in files:
+            if i.endswith(".pdf"):
+                a = os.path.join(root, i)
+                paths.append(a)
+    a = PdfWriter()
+    for pdf in paths:
+        a.append(pdf)
+    a.write(nazwa+".pdf")
+    a.close()
+    os.chdir(cwd)
