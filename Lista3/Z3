@@ -2,8 +2,6 @@ from PyPDF2 import PdfWriter
 import os
 
 def polacz(katalog,nazwa):
-    cwd = os.getcwd()
-    os.chdir("Desktop/275989")
     paths = []
     for root, dirs, files in os.walk(katalog):
         for i in files:
@@ -15,4 +13,6 @@ def polacz(katalog,nazwa):
         a.append(pdf)
     a.write(nazwa+".pdf")
     a.close()
-    os.chdir(cwd)
+
+os.chdir("Desktop/275989")
+polacz("Backup","razem")
