@@ -1,0 +1,18 @@
+import qrcode
+import os
+import cv2
+
+def writeqr(kod,nazwa):
+    img = qrcode.make(kod)
+    img.save(nazwa+".png")
+
+def readqr(nazwa):
+    im = cv2.imread(nazwa+".png")
+    d = cv2.QRCodeDetector()
+    a,b,c = d.detectAndDecode(im)
+    return a
+
+
+os.chdir("Desktop/275989")
+writeqr("zakodowane","kodqr")
+print(readqr("kodqr"))
