@@ -1,0 +1,13 @@
+import os
+
+def unix(plik,x):
+    a = open(plik,'r',newline='').read()
+    if x:
+        b = open(plik,'w',newline='\n')
+    else:
+        b = open(plik,'w',newline='\r\n')
+    b.write(a)
+    b.close()
+
+os.chdir("Desktop/275989")
+unix("doc.txt",False)
