@@ -1,0 +1,12 @@
+import webbrowser
+import requests
+from bs4 import BeautifulSoup
+
+rwp = "https://en.wikipedia.org/wiki/Special:Random"
+r = requests.get(rwp)
+print(r.url)
+s = BeautifulSoup(r.text,'html.parser')
+t = s.title
+print(t.string)
+if input() != "":
+    webbrowser.open(r.url)
