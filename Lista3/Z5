@@ -20,3 +20,6 @@ def nawiasy(s):
     if n == "":
         return True
     return False
+
+s = "a{[a[(aa<a<>{}aa>)[a]a]a]a(aa<(a)()a>)a}"
+print(nawiasy(s))
