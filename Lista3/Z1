@@ -4,8 +4,6 @@ import datetime
 import os
 
 def kopia(katalog,ext):
-    cwd = os.getcwd()
-    os.chdir("Desktop/275989")
     paths = []
     names = []
     dates = []
@@ -30,4 +28,6 @@ def kopia(katalog,ext):
     for i in range(len(paths)):
         if dates[i] <= 3*24*3600:
             shutil.copy(paths[i],f"Backup/copy-{C}/{names[i]}")
-    os.chdir(cwd)
+
+os.chdir("Desktop/275989")
+kopia("prog","py")
