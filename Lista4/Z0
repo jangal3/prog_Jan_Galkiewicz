@@ -1,0 +1,18 @@
+import matplotlib.pyplot as plt
+
+def SEIR(N,S0,E0,I0,R0,b,s,g,t=100):
+    S = [S0]
+    E = [E0]
+    I = [I0]
+    R = [R0]
+    y = [0]
+    for i in range(t):
+        S.append(S[i]-b*S[i]*I[i]/N)
+        E.append(E[i]+b*S[i]*I[i]/N-s*E[i])
+        I.append(I[i]+s*E[i]-g*I[i])
+        R.append(R[i]+g*I[i])
+        y.append(i+1)
+    plt.plot(y,S,y,E,y,I,y,R)
+    plt.show()
+
+SEIR(1000,999,1,0,0,1.34,0.19,0.34)
