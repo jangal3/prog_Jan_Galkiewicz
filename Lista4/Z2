@@ -1,0 +1,60 @@
+from fun import *
+import sys
+
+N, S, E, I, R, b, s, g = 0, 0, 1, 0, 0, 0.8, 0.2, 0.4
+T = [0,0,0,0,0]
+
+for i in range(len(sys.argv)):
+    if sys.argv[i][1:] == "N":
+        N = int(sys.argv[i+1])
+        T[0] = 1
+    if sys.argv[i][1:] == "S0":
+        S = int(sys.argv[i+1])
+        T[1] = 1
+    if sys.argv[i][1:] == "E0":
+        E = int(sys.argv[i+1])
+        T[2] = 1
+    if sys.argv[i][1:] == "I0":
+        I = int(sys.argv[i+1])
+        T[3] = 1
+    if sys.argv[i][1:] == "R0":
+        R = int(sys.argv[i+1])
+        T[4] = 1
+    if sys.argv[i][1:] == "beta":
+        b = float(sys.argv[i+1])
+    if sys.argv[i][1:] == "sigma":
+        s = float(sys.argv[i+1])
+    if sys.argv[i][1:] == "gamma":
+        g = float(sys.argv[i+1])
+
+if T[2] == 0:
+    if I > 0:
+        E = 0
+    else:
+        if T[0] == 1 and S+E+I+R < N:
+            E = 1
+    if T[0]==1 and T[1]==1 and T[3]==1 and T[4]==1:
+        E = N-S-I-R
+if T[3] == 0:
+    if E > 0:
+        I = 0
+    else:
+        if T[0] == 1 and S+E+I+R < N:
+            I = 1
+    if T[0]==1 and T[1]==1 and T[4]==1:
+        I = N-S-E-R
+if T[1] == 0:
+    if T[0] == 0:
+        S = max(100,10*(E+I+R))
+    else:
+        S = N-E-I-R
+if T[4] == 0:
+    if T[0]==1 and T[1]==1:
+        R = N-S-E-I
+if T[0] == 0:
+    N = S+E+I+R
+
+print(N,'=',S+E+I+R)
+print(S,E,I,R,'===',N)
+
+SEIR(N,S,E,I,R,b,s,g)
