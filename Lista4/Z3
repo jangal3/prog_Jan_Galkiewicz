@@ -1,0 +1,52 @@
+import math
+import networkx as nx
+from random import randint
+from random import choice
+import matplotlib.pyplot as plt
+import matplotlib.animation as anm
+
+G = nx.Graph()
+
+n = randint(7,10)
+for i in range(n):
+    G.add_node(i)
+G.add_edge(1,2)
+for i in range(randint(12,15)):
+    a = randint(1,n)
+    b = a
+    while b==a:
+        b = randint(1,n)
+    G.add_edge(a,b)
+#print(G.edges)
+
+T = [1]
+for i in range(20):
+    l = list(G.adj[T[i]])
+    T.append(choice(l))
+
+#print(T)
+x = []
+y = []
+for i in range(n):
+    a = 2*math.pi*i/n
+    x.append(math.sin(a))
+    y.append(math.cos(a))
+
+
+fig, ax = plt.subplots()
+ax.scatter(x,y,color='y')
+
+for i in range(n):
+    l = list(G.adj[i+1])
+    #print(l)
+    for j in range(len(l)):
+        ax.plot([x[i],x[l[j]-1]],[y[i],y[l[j]-1]],color='y')
+
+fig.savefig('graf.png')
+
+def animate(i):
+    ax.scatter(x,y,color='y')
+    ax.scatter(x[T[i]-1],y[T[i]-1],color='b')
+anim = anm.FuncAnimation(fig=fig,func=animate,frames=20,interval=400,repeat=False)
+anim.save('graf.gif')
+plt.show()
