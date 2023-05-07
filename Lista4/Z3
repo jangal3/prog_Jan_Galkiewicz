@@ -5,6 +5,8 @@ from random import choice
 import matplotlib.pyplot as plt
 import matplotlib.animation as anm
 
+import os
+
 G = nx.Graph()
 
 n = randint(7,10)
@@ -42,11 +44,16 @@ for i in range(n):
     for j in range(len(l)):
         ax.plot([x[i],x[l[j]-1]],[y[i],y[l[j]-1]],color='y')
 
+os.chdir("Desktop/prog")
+if not os.path.exists("Grafy"):
+    os.mkdir("Grafy")
+os.chdir("Grafy")
 fig.savefig('graf.png')
 
 def animate(i):
     ax.scatter(x,y,color='y')
     ax.scatter(x[T[i]-1],y[T[i]-1],color='b')
-anim = anm.FuncAnimation(fig=fig,func=animate,frames=20,interval=400,repeat=False)
+    fig.savefig(f'step{i}.png')
+anim = anm.FuncAnimation(fig=fig,func=animate,frames=20,interval=600,repeat=False)
 anim.save('graf.gif')
 plt.show()
