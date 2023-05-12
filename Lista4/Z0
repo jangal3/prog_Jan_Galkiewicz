@@ -5,6 +5,8 @@ def SEIR(N,S0,E0,I0,R0,b,s,g):
     E = [E0]
     I = [I0]
     R = [R0]
+    if S0 + E0 + I0 + R0 != N:
+        raise ValueError
     y = [0]
     i = 0
     d = 1
