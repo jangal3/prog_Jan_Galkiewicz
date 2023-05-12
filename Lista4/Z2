@@ -57,4 +57,4 @@ if T[0] == 0:
 print(N,'=',S+E+I+R)
 print(S,E,I,R,'===',N)
 
-SEIR(N,S,E,I,R,b,s,g)
+SEIR(abs(N),abs(S),abs(E),abs(I),abs(R),b,s,g)
