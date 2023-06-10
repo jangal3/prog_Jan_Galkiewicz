@@ -37,8 +37,6 @@ for i in range(6):
     d = randint(res[0]//12,res[0]//9)
     Platforms.append((s-d,i*144+144,2*d,36))
 
-print(Platforms)
-
 class Player:
     def __init__(self,x,y,vx=0,vy=0,acc=0.4,dcc=0.2,g=1):
         self.x = x
