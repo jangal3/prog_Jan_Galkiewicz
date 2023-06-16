@@ -1,0 +1,323 @@
+import pygame
+from random import randint
+from math import log
+import os
+
+pygame.init()
+
+res = (1280,720)
+
+maxscores = 50
+
+screen = pygame.display.set_mode(res)
+pygame.display.set_caption("Spire Climb")
+
+fps = 60
+plrWidth, plrHeight = 72, 72
+
+settings = (((1920,1080),(1800,1000),(1600,900),(1440,840),(1280,720),(1000,600)),(90,75,60,50,40,30))
+
+try:
+    with open("highscores.txt",'r') as s:
+        tab = s.read()[:-1].split(" ")
+except OSError:
+    with open("highscores.txt",'w') as s:
+        tab = []
+
+for i in range(len(tab)):
+    tab[i] = int(tab[i])
+
+def props():
+    global font,fonts,plr,lwall,rwall,Platforms,start,rules,scores,config,about,exit,select,select2,rulset,scoreboard,description,pause,defeat
+    font = pygame.font.SysFont('ariel', res[1]//7)
+    fonts = pygame.font.SysFont('ariel', res[1]//9)
+    plr = pygame.Rect(0,0,plrWidth,plrHeight)
+    lwall = pygame.Rect(0,0,res[0]//18,res[1])
+    rwall = pygame.Rect(res[0]*17//18+1,0,res[0]//18,res[1])
+    Platforms = [(0,0,res[0],72)]
+
+    start = pygame.Rect(res[0]*2/3,res[1]*0.3,res[0]/4,res[1]/12)
+    rules = pygame.Rect(res[0]*2/3,res[1]*0.4,res[0]/4,res[1]/12)
+    scores = pygame.Rect(res[0]*2/3,res[1]*0.5,res[0]/4,res[1]/12)
+    config = pygame.Rect(res[0]*2/3,res[1]*0.6,res[0]/4,res[1]/12)
+    about = pygame.Rect(res[0]*2/3,res[1]*0.7,res[0]/4,res[1]/12)
+    exit = pygame.Rect(res[0]*2/3,res[1]*0.8,res[0]/4,res[1]/12)
+    select = pygame.Rect(res[0]*2/3,0,res[0]/4,res[1]/12)
+    select2 = pygame.Rect(res[0]/12,0,res[0]/3,res[1]/12)
+    rulset = pygame.Rect(res[0]/9,res[1]/9,res[0]*7/9,res[1]*7/9)
+    scoreboard = pygame.Rect(res[0]/9,res[1]/9,res[0]*7/9,res[1]*7/9)
+    description = pygame.Rect(res[0]/9,res[1]/9,res[0]*7/9,res[1]*7/9)
+
+    pause = pygame.Rect(res[0]/6,res[1]*2/7,res[0]/4,res[1]/12)
+    defeat = pygame.Rect(res[0]/6,res[1]*2/7,res[0]/4,res[1]/12)
+props()
+
+for i in range(6):
+    s = randint(res[0]//9,res[0]*8//9)
+    d = randint(res[0]//12,res[0]//9)
+    Platforms.append((s-d,i*144+144,2*d,36))
+
+class Player:
+    def __init__(self,x,y,vx=0,vy=0,acc=20,dcc=10,g=1):
+        self.x = x
+        self.y = y
+        self.vx = vx
+        self.vy = vy
+        self.acc = acc
+        self.dcc = dcc
+        self.g = g
+    def set_x(self,key):
+        if key[pygame.K_a]:
+            self.vx = self.vx-self.acc/fps
+        if key[pygame.K_d]:
+            self.vx = self.vx+self.acc/fps
+        if not (key[pygame.K_a] or key[pygame.K_d]):
+            if self.vx > 0:
+                self.vx = max(0,self.vx - self.dcc/fps)
+            if self.vx < 0:
+                self.vx = min(0,self.vx + self.dcc/fps)
+        self.x = self.x + self.vx
+        a = abs(self.vx) + 0.01
+        a = max(0,a-81/a)
+        if self.x < lwall.w:
+            self.x = lwall.w
+            self.vx = a*0.75
+        if self.x + plrWidth > rwall.x:
+            self.x = rwall.x - plrWidth
+            self.vx = -a*0.75
+        return self.x
+    def set_y(self,key):
+        self.vy -= 60*self.g/fps
+        self.y += self.vy
+        if self.vy < 0:
+            for i in Platforms:
+                if self.x + plrWidth > i[0] and self.x < i[0] + i[2] and self.y <= i[1] and self.y >= i[1] + self.vy:
+                    self.vy = 0
+                    self.y = i[1]
+                    if key[pygame.K_w]:
+                        self.vy = 8*(abs(self.vx)*0.4 + 23)/fps**0.5
+        return self.y
+
+
+def render(scroll,points):
+    screen.fill((191,191,191))
+    for i in Platforms:
+        platf = pygame.Rect(i[0],scroll-i[1],i[2],i[3])
+        pygame.draw.rect(screen,(63,63,63),platf)
+    pygame.draw.rect(screen,(0,0,0),lwall)
+    pygame.draw.rect(screen,(0,0,0),rwall)
+    pygame.draw.rect(screen,(0,0,0),plr)
+    screen.blit(font.render(points,True,(0,0,0)),(res[0]//18,0))
+    pygame.display.update()
+
+def menu(pick):
+    screen.fill((191,191,191))
+    pygame.draw.rect(screen,(0,0,0),start)
+    pygame.draw.rect(screen,(0,0,0),rules)
+    pygame.draw.rect(screen,(0,0,0),scores)
+    pygame.draw.rect(screen,(0,0,0),config)
+    pygame.draw.rect(screen,(0,0,0),about)
+    pygame.draw.rect(screen,(0,0,0),exit)
+    select.y = res[1]*(3+pick)/10
+    pygame.draw.rect(screen,(255,0,0),select)
+    screen.blit(font.render("START",True,(255,255,255)),(start.x,start.y))
+    screen.blit(font.render("RULES",True,(255,255,255)),(rules.x,rules.y))
+    screen.blit(font.render("SCORES",True,(255,255,255)),(scores.x,scores.y))
+    screen.blit(font.render("CONFIG",True,(255,255,255)),(config.x,config.y))
+    screen.blit(font.render("ABOUT",True,(255,255,255)),(about.x,about.y))
+    screen.blit(font.render("EXIT",True,(255,255,255)),(exit.x,exit.y))
+    pygame.display.update()
+
+def options(pick,option,use):
+    screen.fill((191,191,191))
+    pygame.draw.rect(screen,(0,0,0),scores)
+    pygame.draw.rect(screen,(0,0,0),config)
+    pygame.draw.rect(screen,(0,0,0),about)
+    select.y = res[1]*(4+pick)/10
+    pygame.draw.rect(screen,(255,0,0),select)
+    screen.blit(font.render("RES",True,(255,255,255)),(scores.x,scores.y))
+    screen.blit(font.render("FPS",True,(255,255,255)),(config.x,config.y))
+    screen.blit(font.render("BACK",True,(255,255,255)),(about.x,about.y))
+    if pick < 3:
+        for i in range(6):
+            w = pygame.Rect(res[0]/12,res[1]*(i+3)/10,res[0]/3,res[1]/12)
+            pygame.draw.rect(screen,(0,0,0),w)
+            screen.blit(fonts.render(str(settings[pick-1][i]),True,(255,255,255)),(res[0]/12,res[1]*(i+3)/10))
+    if option < 3:
+        select2.y = res[1]*(use+3)/10
+        pygame.draw.rect(screen,(255,0,0),select2)
+        screen.blit(fonts.render(str(settings[pick-1][use]),True,(255,255,255)),(res[0]/12,res[1]*(use+3)/10))
+
+
+def main():
+    global res,screen,fps
+    clock = pygame.time.Clock()
+    run = True
+    test = False
+    Acy = Player(600,0)
+    scroll = res[1]*0.75
+    points = 0
+    game = 0
+    pick = 0
+    option = 4
+    use = 0
+    out = True
+    ok = True
+    while run:
+        clock.tick(fps)
+        key = pygame.key.get_pressed()
+        if not (key[pygame.K_s] or key[pygame.K_w] or key[pygame.K_SPACE]):
+            ok = True
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        if game == 0: #menu
+            if key[pygame.K_s] and ok:
+                pick = min(5,pick+1)
+                ok = False
+            if key[pygame.K_w] and ok:
+                pick = max(0,pick-1)
+                ok = False
+            if key[pygame.K_SPACE] and ok:
+                game = pick+1
+                ok = False
+            menu(pick)
+        if game == 1: #start
+            if key[pygame.K_SPACE] and ok:
+                game = 7
+                pick = 1
+                ok = False
+            scroll += max(0,res[1]/6 - plr.y) + max(0, log(Acy.y/360 + 0.01))*60/fps
+            points = max(points,int(Acy.y//144))
+            plr.x = Acy.set_x(key)
+            plr.y = scroll - Acy.set_y(key) - plrHeight
+            if test:
+                if scroll > Acy.y + res[1] - 36:
+                    scroll = Acy.y + res[1] - 36
+            else:
+                if scroll > Acy.y + res[1] + plrHeight:
+                    game = 8
+                    pick = 1
+                    tab.append(points)
+                    tab.sort(reverse=True)
+                    while len(tab) > 60:
+                        tab.pop(-1)
+                    wyn = ""
+                    for i in tab:
+                        wyn += str(i)+" "
+                    with open("highscores.txt",'w') as s:
+                        s.write(wyn)
+            while scroll > len(Platforms)*144-144:
+                s = randint(res[0]//9,res[0]*8//9)
+                d = randint(res[0]//12,res[0]//9)
+                Platforms.append((s-d,len(Platforms)*144,2*d,36))
+            render(scroll,str(points))
+        if game == 2: #rules
+            if key[pygame.K_SPACE] and ok:
+                game = 0
+                ok = False
+            screen.fill((191,191,191))
+            pygame.draw.rect(screen,(0,0,0),rulset)
+            pygame.display.update()
+        if game == 3: #scores
+            if key[pygame.K_SPACE] and ok:
+                game = 0
+                ok = False
+            screen.fill((191,191,191))
+            pygame.draw.rect(screen,(0,0,0),scoreboard)
+            for i in range(min(maxscores,len(tab))):
+                screen.blit(font.render(str(tab[i]),True,(255,255,255)),(scoreboard.x+i//10*scoreboard.w/maxscores*10,scoreboard.y+i%10*res[1]/13))
+            pygame.display.update()
+        if game == 4: #config
+            if out:
+                if key[pygame.K_s] and ok:
+                    pick = min(3,pick+1)
+                    ok = False
+                if key[pygame.K_w] and ok:
+                    pick = max(1,pick-1)
+                    ok = False
+                if key[pygame.K_SPACE] and ok:
+                    option = pick
+                    if pick < 3:
+                        out = False
+                    ok = False
+            else:
+                if key[pygame.K_s] and ok:
+                    use = min(5,use+1)
+                    ok = False
+                if key[pygame.K_w] and ok:
+                    use = max(0,use-1)
+                    ok = False
+                if key[pygame.K_SPACE] and ok:
+                    out = True
+                    ok = False
+                    if option == 1:
+                        res = settings[0][use]
+                        screen = pygame.display.set_mode(res)
+                        props()
+                        scroll = res[1]*0.75
+                    if option == 2:
+                        fps = settings[1][use]
+                    option = 4
+            options(pick,option,use)
+            pygame.display.update()
+            if option == 3:
+                option = 4
+                game = 0
+        if game == 5: #about
+            if key[pygame.K_SPACE] and ok:
+                game = 0
+                ok = False
+            screen.fill((191,191,191))
+            pygame.draw.rect(screen,(0,0,0),description)
+            pygame.display.update()
+        if game == 6: #exit
+            run = False
+        if game == 7: #pause
+            if key[pygame.K_s]:
+                pick = 0
+            if key[pygame.K_w]:
+                pick = 1
+            if key[pygame.K_SPACE] and ok:
+                game = pick
+                ok = False
+                if pick == 0:
+                    points = 0
+                    Platforms.clear()
+                    Platforms.append((0,0,res[0],72))
+                    Acy = Player(600,0)
+                    scroll = res[1]*0.9
+            pygame.draw.rect(screen,(0,0,0),pause)
+            pygame.draw.rect(screen,(0,0,0),config)
+            pygame.draw.rect(screen,(0,0,0),about)
+            select.y = res[1]*(7-pick)/10
+            pygame.draw.rect(screen,(255,0,0),select)
+            screen.blit(font.render("RESUME",True,(255,255,255)),(config.x,config.y))
+            screen.blit(font.render("MENU",True,(255,255,255)),(about.x,about.y))
+            screen.blit(font.render("PAUSE",True,(255,255,255)),(pause.x,pause.y))
+            pygame.display.update()
+        if game == 8: #defeat
+            if key[pygame.K_s]:
+                pick = 0
+            if key[pygame.K_w]:
+                pick = 1
+            if key[pygame.K_SPACE] and ok:
+                game = pick
+                ok = False
+                points = 0
+                Platforms.clear()
+                Platforms.append((0,0,res[0],72))
+                Acy = Player(600,0)
+                scroll = res[1]*0.9
+            pygame.draw.rect(screen,(0,0,0),defeat)
+            pygame.draw.rect(screen,(0,0,0),config)
+            pygame.draw.rect(screen,(0,0,0),about)
+            select.y = res[1]*(7-pick)/10
+            pygame.draw.rect(screen,(255,0,0),select)
+            screen.blit(font.render("RETRY",True,(255,255,255)),(config.x,config.y))
+            screen.blit(font.render("MENU",True,(255,255,255)),(about.x,about.y))
+            screen.blit(font.render("DEFEAT",True,(255,255,255)),(defeat.x,defeat.y))
+            pygame.display.update()
+
+if __name__ == "__main__":
+    main()
