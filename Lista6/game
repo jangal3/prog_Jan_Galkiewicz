@@ -195,6 +195,7 @@ def main():
             if key[pygame.K_SPACE] and ok:
                 game = pick+1
                 ok = False
+                lives = 3
             menu(pick)
         if game == 1: #start
             if key[pygame.K_SPACE] and ok:
@@ -226,7 +227,7 @@ def main():
                     else:
                         pygame.mixer.Sound.play(fall)
                         Acy.vy = 40
-                        lives -= 1
+                    lives -= 1
             while scroll > len(Platforms)*144-144:
                 s = randint(res[0]//9,res[0]*8//9)
                 d = randint(res[0]//12,res[0]//9)
@@ -324,6 +325,7 @@ def main():
             if key[pygame.K_w]:
                 pick = 1
             if key[pygame.K_SPACE] and ok:
+                lives = 3
                 game = pick
                 ok = False
                 points = 0
